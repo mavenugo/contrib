@@ -31,6 +31,23 @@ fi
 # From here on, any failed command is a fatal error.
 set -e
 
+pod_name=""
+IFS=';' read -a args <<< "${CNI_ARGS}"
+for i in "${args[@]}"
+do
+    IFS='=' read -a POD_NAME <<< "${i}"
+    key=""
+    for k in "${POD_NAME[@]}"
+    do
+            echo "key  $key" >> /var/log/c2d.log
+        if [ $key = 'K8S_POD_NAME' ];
+        then
+            pod_name=$k
+        fi
+        key=$k
+    done
+done
+
 case "${CNI_COMMAND}" in
     (ADD)
 
